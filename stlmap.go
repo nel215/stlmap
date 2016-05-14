@@ -1,8 +1,12 @@
 package stlmap
 
 import (
-	"hash/fnv"
 	"sync"
+)
+
+const (
+	offset32 = uint32(2166136261)
+	prime32  = uint32(16777619)
 )
 
 type StripedLockedMap struct {
@@ -31,9 +35,12 @@ func New() *StripedLockedMap {
 }
 
 func (smap *StripedLockedMap) backend(key string) *Backend {
-	h := fnv.New32a()
-	h.Write([]byte(key))
-	return smap.backends[h.Sum32()&smap.mod]
+	hash := offset32
+	for i := 0; i < len(key); i++ {
+		hash ^= uint32(key[i])
+		hash *= prime32
+	}
+	return smap.backends[hash&smap.mod]
 }
 
 func (smap *StripedLockedMap) Set(key string, value interface{}) {
