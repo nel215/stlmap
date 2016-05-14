@@ -57,7 +57,7 @@ func BenchmarkConcurrent(b *testing.B) {
 		return res
 	}
 	m := New()
-	keys := getKeys(10)
+	keys := getKeys(1000)
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			do(m, keys)
@@ -81,7 +81,7 @@ func BenchmarkDefaultMap(b *testing.B) {
 	}
 	mu := &sync.RWMutex{}
 	mp := make(map[string]interface{})
-	keys := getKeys(10)
+	keys := getKeys(1000)
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
