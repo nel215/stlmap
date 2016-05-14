@@ -65,7 +65,7 @@ func BenchmarkConcurrent(b *testing.B) {
 	})
 }
 
-func BenchmarkDefaultMap(b *testing.B) {
+func BenchmarkDefaultMapConcurrent(b *testing.B) {
 	do := func(mu *sync.RWMutex, mp map[string]interface{}, keys []string) interface{} {
 		key := keys[rand.Int()%len(keys)]
 		mu.Lock()
@@ -88,4 +88,20 @@ func BenchmarkDefaultMap(b *testing.B) {
 			do(mu, mp, keys)
 		}
 	})
+}
+
+func BenchmarkDefaultMapSingle(b *testing.B) {
+	do := func(mp map[string]interface{}, keys []string) interface{} {
+		key := keys[rand.Int()%len(keys)]
+		mp[key] = 1
+		res := mp[key]
+		delete(mp, key)
+		return res
+	}
+	mp := make(map[string]interface{})
+	keys := getKeys(1000)
+
+	for i := 0; i < b.N; i++ {
+		do(mp, keys)
+	}
 }
