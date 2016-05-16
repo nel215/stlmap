@@ -7,3 +7,10 @@ stlmap is a concurrent map using striped locked approach
 # Example
 
 see [here](./example_test.go)
+
+# Performance
+
+```
+BenchmarkConcurrent-4           20000000               260 ns/op
+BenchmarkDefaultMapConcurrent-4 20000000               310 ns/op
+```
