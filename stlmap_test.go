@@ -64,7 +64,7 @@ func TestConcurrent(t *testing.T) {
 	wg.Wait()
 }
 
-func BenchmarkConcurrent(b *testing.B) {
+func BenchmarkStlmapConcurrent(b *testing.B) {
 	do := func(m *StripedLockedMap, keys []string) interface{} {
 		key := keys[rand.Int()%len(keys)]
 		m.Set(key, 1)

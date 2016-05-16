@@ -11,6 +11,6 @@ see [here](./example_test.go)
 # Performance
 
 ```
-BenchmarkConcurrent-4           20000000               260 ns/op
+BenchmarkStlmapConcurrent-4     20000000               260 ns/op
 BenchmarkDefaultMapConcurrent-4 20000000               310 ns/op
 ```
