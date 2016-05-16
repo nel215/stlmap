@@ -19,10 +19,17 @@ type Backend struct {
 	mp map[string]interface{}
 }
 
-func New() *StripedLockedMap {
-	exp := uint(3)
-	backends := make([]*Backend, 1<<exp)
-	for i := 0; i < (1 << exp); i++ {
+type Config struct {
+	// power (>0) is power of backends size. default is 10.
+	Power uint
+}
+
+func New(c *Config) *StripedLockedMap {
+	if c.Power == 0 {
+		c.Power = uint(10)
+	}
+	backends := make([]*Backend, 1<<c.Power)
+	for i := 0; i < (1 << c.Power); i++ {
 		backends[i] = &Backend{
 			mu: &sync.RWMutex{},
 			mp: make(map[string]interface{}),
@@ -30,8 +37,12 @@ func New() *StripedLockedMap {
 	}
 	return &StripedLockedMap{
 		backends: backends,
-		mod:      (1 << exp) - 1,
+		mod:      (1 << c.Power) - 1,
 	}
+}
+
+func (smap *StripedLockedMap) BucketSize() int {
+	return len(smap.backends)
 }
 
 func (smap *StripedLockedMap) backend(key string) *Backend {

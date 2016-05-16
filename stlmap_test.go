@@ -15,8 +15,24 @@ func getKeys(n int) []string {
 	return keys
 }
 
+func TestNew(t *testing.T) {
+	type Case struct {
+		Config   *Config
+		Expected int
+	}
+	for _, c := range []Case{
+		Case{&Config{}, 1 << 10},
+		Case{&Config{1}, 1 << 1},
+	} {
+		m := New(c.Config)
+		if m.BucketSize() != c.Expected {
+			t.Errorf("expected %d, but got %d", c.Expected, m.BucketSize())
+		}
+	}
+}
+
 func TestSetAndGetAndDelete(t *testing.T) {
-	m := New()
+	m := New(&Config{})
 	m.Set("key", 1)
 	res := m.Get("key")
 	if res != 1 {
@@ -38,7 +54,7 @@ func TestConcurrent(t *testing.T) {
 		wg.Done()
 		return res
 	}
-	m := New()
+	m := New(&Config{})
 	wg := &sync.WaitGroup{}
 	keys := getKeys(1000)
 	for i := 0; i < 1000; i++ {
@@ -56,7 +72,7 @@ func BenchmarkConcurrent(b *testing.B) {
 		m.Delete(key)
 		return res
 	}
-	m := New()
+	m := New(&Config{})
 	keys := getKeys(1000)
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {

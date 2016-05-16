@@ -5,7 +5,7 @@ import (
 )
 
 func Example() {
-	mp := New()
+	mp := New(&Config{})
 	mp.Set("key", 123)
 	fmt.Println(mp.Get("key"))
 	mp.Delete("key")
